@@ -1,7 +1,10 @@
 import unittest
 from inline_markdown import(
-    split_nodes_delimiter
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links,    
 )
+
 from textnode import (
     TextNode,
     text_type_text,
@@ -71,6 +74,28 @@ class TestInlineMarkdown(unittest.TestCase):
                 TextNode(" word", text_type_text),
             ],
             new_nodes,
+        )
+
+    def test_extract_markdown_images(self):
+        text = "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and ![another](https://i.imgur.com/dfsdkjfd.png)"
+        list = extract_markdown_images(text)
+        self.assertListEqual(
+            [
+                ("image", "https://i.imgur.com/zjjcJKZ.png"),
+                ("another", "https://i.imgur.com/dfsdkjfd.png"),
+            ],
+            list,
+        )
+
+    def test_extract_markdown_link(self):
+        text = "This is text with an [image](https://i.imgur.com/zjjcJKZ.png) and [another](https://i.imgur.com/dfsdkjfd.png)"
+        list = extract_markdown_links(text)
+        self.assertListEqual(
+            [
+                ("image", "https://i.imgur.com/zjjcJKZ.png"),
+                ("another", "https://i.imgur.com/dfsdkjfd.png"),
+            ],
+            list,
         )
 
 if __name__ == "__main__":
