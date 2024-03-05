@@ -4,7 +4,8 @@ from inline_markdown import(
     extract_markdown_images,
     extract_markdown_links,
     split_nodes_image,
-    split_nodes_link,    
+    split_nodes_link,
+    text_to_textnodes,
 )
 
 from textnode import (
@@ -157,6 +158,60 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,
         )
+
+    def test_text_to_textnode_in_order(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
+        new_nodes = text_to_textnodes(text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", text_type_text),
+                TextNode("text", text_type_bold),
+                TextNode(" with an ", text_type_text),
+                TextNode("italic", text_type_italic),
+                TextNode(" word and a ", text_type_text),
+                TextNode("code block", text_type_code),
+                TextNode(" and an ", text_type_text),
+                TextNode("image", text_type_image, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and a ", text_type_text),
+                TextNode("link", text_type_link, "https://boot.dev"),
+            ],
+            new_nodes,
+        )
+    
+    def test_text_to_textnode_out_of_order(self):
+        text = "This is *text* with a `code block` word and a **bold word** and a [link](https://boot.dev) and an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        new_nodes = text_to_textnodes(text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", text_type_text),
+                TextNode("text", text_type_italic),
+                TextNode(" with a ", text_type_text),
+                TextNode("code block", text_type_code),
+                TextNode(" word and a ", text_type_text),
+                TextNode("bold word", text_type_bold),
+                TextNode(" and a ", text_type_text),
+                TextNode("link", text_type_link, "https://boot.dev"),
+                TextNode(" and an ", text_type_text),
+                TextNode("image", text_type_image, "https://i.imgur.com/zjjcJKZ.png"),
+            ],
+            new_nodes,
+        )
+
+    def test_text_to_textnode_multiples(self):
+        text = "This is **text** with two links: [link](https://boot.dev) and [link](https://i.imgur.com/zjjcJKZ.png)"
+        new_nodes = text_to_textnodes(text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", text_type_text),
+                TextNode("text", text_type_bold),
+                TextNode(" with two links: ", text_type_text),
+                TextNode("link", text_type_link, "https://boot.dev"),
+                TextNode(" and ", text_type_text),
+                TextNode("link", text_type_link, "https://i.imgur.com/zjjcJKZ.png"),
+            ],
+            new_nodes,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
