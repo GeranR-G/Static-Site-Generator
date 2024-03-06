@@ -18,9 +18,9 @@ def main():
     
     print("Generating page...")
     generate_pages_recursive(
-        os.path.join(dir_path_content, "index.md"),
+        dir_path_content,
         template_path,
-        os.path.join(dir_path_public, "index.html")
+        dir_path_public
     )
 
 main()
