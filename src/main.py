@@ -1,7 +1,14 @@
-from textnode import TextNode
+import os, shutil
+from copystatic import copy_directory
+
+origin_path = "./static/"
+destination_path = "./public/"
 
 def main():
-    node = TextNode("This is a text node", "bold", "https://www.boot.dev")
-    print(node)
+    if os.path.exists(destination_path):
+        print("Deleting public directory...")
+        shutil.rmtree(destination_path)
+    print("Copying static files to public directory...")
+    copy_directory(origin_path, destination_path)
 
 main()
