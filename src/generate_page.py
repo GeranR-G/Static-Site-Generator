@@ -6,16 +6,10 @@ from markdown_blocks import(
 
 def extract_title(markdown):
     blocks = markdown_to_blocks(markdown)
-    title = None
     for block in blocks:
         if "# " in block:
-            if title == None:
-                title = block.lsplit("# ").split()
-            else:
-                raise ValueError("Invalid markdown: multiple h1 headers")
-    if title == None:
-        raise ValueError("Invalid markdown: missing h1 header")
-    return title
+            return block.lstrip("# ").strip()
+    raise ValueError("Invalid markdown: missing h1 header")
 
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path}, using {template_path}")
