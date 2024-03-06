@@ -1,13 +1,14 @@
 import os
 from markdown_blocks import markdown_to_html_node
 
-
-def extract_title(markdown):
-    lines = markdown.split("\n")
-    for line in lines:
-        if line.startswith("# "):
-            return line[2:]
-    raise ValueError("Invalid markdown: missing h1 header")
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for dir in os.listdir(dir_path_content):
+        destination_path = os.path.join(dest_dir_path, dir)
+        origin_path = os.path.join(dir_path_content, dir)
+        if os.path.isfile(origin_path) and origin_path.split(".", 1)[1] == "md":
+            generate_page(origin_path, template_path, destination_path)
+        else:
+            generate_pages_recursive(origin_path, template_path, destination_path)
 
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path}, using {template_path}")
@@ -28,3 +29,10 @@ def generate_page(from_path, template_path, dest_path):
         os.makedirs(dest_path_dir)
     new_HTML = open(dest_path, "w")
     new_HTML.write(template)
+
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    for line in lines:
+        if line.startswith("# "):
+            return line[2:]
+    raise ValueError("Invalid markdown: missing h1 header")
